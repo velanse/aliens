@@ -4,13 +4,15 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
-	"github.com/velanse/aliens/world"
 	"log"
 	"os"
 	"strings"
+
+	"github.com/velanse/aliens/printer"
+	"github.com/velanse/aliens/world"
 )
 
-const(
+const (
 	separator = "="
 )
 
@@ -37,7 +39,7 @@ func ReadFile(filename string) (map[string]*world.Node, error) {
 			node = world.NewNode(nodeName)
 		}
 
-		for i:=1; i<len(lineSlice); i++ {
+		for i := 1; i < len(lineSlice); i++ {
 			connection := strings.Split(lineSlice[i], separator)
 			if len(connection) < 2 {
 				return nil, errors.New("invalid connection mapping")
@@ -67,7 +69,7 @@ func ReadFile(filename string) (map[string]*world.Node, error) {
 	return nodes, nil
 }
 
-func PrintNodes(nodes map[string]*world.Node) {
+func PrintNodes(nodes map[string]*world.Node, printer printer.Printer) {
 	for _, node := range nodes {
 		if !node.Active {
 			continue
@@ -80,6 +82,6 @@ func PrintNodes(nodes map[string]*world.Node) {
 			output += fmt.Sprintf(" %s=%s", k, v.Name)
 		}
 
-		fmt.Println(output)
+		printer.Println(output)
 	}
 }

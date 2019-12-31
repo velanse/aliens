@@ -1,3 +1,3 @@
 A east=B
-B west=A east=C
+B west=A
 C west=B
