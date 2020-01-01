@@ -1,25 +1,28 @@
-##Aliens invasion
+## Aliens invasion
 
-###Usage of a program  
+### Usage of a program  
 Example:
 
-`go run main.go -map testdata.txt -N=2`
+`go run main.go -map testdata/test01.txt -N=2`
 
 parameters:  
 - N (int): Number of aliens  
 - map (string): A path to file that contains a map of cities
+- debug (bool): Set to true in order to output debug messages
 
 Testing:  
 
 `go test ./...`
 
-###Assumptions
+Run Benchmarks:
+
+`go test ./... -bench .`
+
+### Assumptions
 - Output file contains full information about the cities (all the cities are listed with inbound and outbound connections)
 - More than one alien can land into one city and destroy it immediately
 - An alien can land into the dead city - this way he dies immediately
 
-###Things to improve
-- Implement bounded parallelism for the async version for an optimal goroutines number;
-- Use some of the existing logging libraries that already support log levels
-- For the async version implement the travel time for the real life simulation
-
+### Things to improve
+- Use one of the existing logging libraries to support log levels
+- Encapsulate the random numbers generator in a separate interface. So it could be replaced with a mock that generates deterministic values which will help to create more sophisticated tests.

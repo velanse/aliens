@@ -3,7 +3,6 @@ package world
 import (
 	"math/rand"
 	"strconv"
-	"sync"
 
 	"github.com/velanse/aliens/printer"
 )
@@ -62,37 +61,17 @@ func InhabitWithAliens(nodes map[string]*Node, nodeNames []string, n int, p prin
 	return aliens
 }
 
-func RunSync(aliens []*Alien, p printer.Printer) {
-	p.Debug("--- Aliens will move synchronously --- \n")
-
-	// since number of moves is needed only for sync case we are keeping track of it separately
-	movesMade := make(map[string]int, len(aliens))
+func RunSimulation(aliens []*Alien, p printer.Printer) {
 	for len(aliens) > 0 {
 		randomKey := rand.Intn(len(aliens))
 
 		randomAlien := aliens[randomKey]
-		terminated := randomAlien.makeMove(p, false)
-		movesMade[randomAlien.Name]++
+		terminated := randomAlien.makeMove(p)
+		randomAlien.MovesMade++
 
-		if terminated || movesMade[randomAlien.Name] >= maxMoves {
+		if terminated || randomAlien.MovesMade >= maxMoves {
 			aliens[randomKey] = aliens[len(aliens)-1]
 			aliens = aliens[:len(aliens)-1]
 		}
 	}
-}
-
-func RunAsync(aliens []*Alien, delay uint, p printer.Printer) {
-	p.Debug("--- Aliens will move asynchronously --- \n")
-
-	var wg sync.WaitGroup
-	wg.Add(len(aliens))
-
-	for _, a := range aliens {
-		go func(a *Alien) {
-			defer wg.Done()
-			a.Dispatch(p, delay)
-		}(a)
-	}
-
-	wg.Wait()
 }

@@ -14,41 +14,29 @@ type scenario struct {
 	n                       int
 	expectedCitiesDestroyed int
 	expectedCitiesLeft      int
-	async                   bool
 }
 
 var scenarios = []scenario{
 	{
-		name:                    "2 Aliens sync mode",
+		name:                    "2 aliens",
 		nodes:                   setupWorld(3),
 		n:                       2,
 		expectedCitiesDestroyed: 1,
 		expectedCitiesLeft:      2,
-		async:                   false,
 	},
 	{
-		name:                    "1 alien struggle sync mode",
+		name:                    "1 alien struggle",
 		nodes:                   setupWorld(3),
 		n:                       1,
 		expectedCitiesDestroyed: 0,
 		expectedCitiesLeft:      3,
-		async:                   false,
 	},
 	{
-		name:                    "3 aliens invasion sync mode",
+		name:                    "3 aliens invasion",
 		nodes:                   setupWorld(3),
 		n:                       3,
 		expectedCitiesDestroyed: 1,
 		expectedCitiesLeft:      2,
-		async:                   false,
-	},
-	{
-		name:                    "2 aliens async in 2 cities",
-		nodes:                   setupWorld(2),
-		n:                       2,
-		expectedCitiesDestroyed: 1,
-		expectedCitiesLeft:      1,
-		async:                   true,
 	},
 }
 
@@ -61,11 +49,7 @@ func TestSync(t *testing.T) {
 
 		aliens := InhabitWithAliens(s.nodes, nodeNames, s.n, printer)
 
-		if s.async {
-			RunAsync(aliens, 0, printer)
-		} else {
-			RunSync(aliens, printer)
-		}
+		RunSimulation(aliens, printer)
 
 		if len(printer.Messages) != s.expectedCitiesDestroyed {
 			t.Errorf("Wrong cities amount destroyed. Expected: %d, got: %d", s.expectedCitiesDestroyed, len(printer.Messages))
@@ -139,4 +123,17 @@ func setupWorld(citiesNumber int) map[string]*Node {
 	}
 
 	return map[string]*Node{}
+}
+
+func BenchmarkSimulation(b *testing.B) {
+	printer := &printer.MockPrinter{}
+
+	for i := 0; i < b.N; i++ {
+		nodes := setupWorld(3)
+
+		nodeNames := GetNodeNames(nodes)
+		aliens := InhabitWithAliens(nodes, nodeNames, 2, printer)
+
+		RunSimulation(aliens, printer)
+	}
 }

@@ -2,7 +2,6 @@ package world
 
 import (
 	"github.com/velanse/aliens/printer"
-	"sync"
 )
 
 type Node struct {
@@ -10,7 +9,6 @@ type Node struct {
 	Alien        *Alien
 	Destinations map[string]*Node
 	Active       bool
-	mu           sync.RWMutex
 }
 
 func NewNode(name string) *Node {
@@ -46,18 +44,6 @@ func (n *Node) getDestinations() []*Node {
 	}
 
 	return destinations
-}
-
-func lockNodes(nodes []*Node) {
-	for _, d := range nodes {
-		d.mu.Lock()
-	}
-}
-
-func unlockNodes(nodes []*Node) {
-	for _, d := range nodes {
-		d.mu.Unlock()
-	}
 }
 
 func GetNodeNames(nodes map[string]*Node) []string {
