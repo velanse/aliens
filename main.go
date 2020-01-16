@@ -4,6 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"math/rand"
+	"time"
 
 	"github.com/velanse/aliens/io"
 	"github.com/velanse/aliens/printer"
@@ -18,6 +20,9 @@ func main() {
 	)
 
 	fmt.Println("--- Aliens invasion started ---")
+
+	// based on Go's "math/rand" implementation in order not to have deterministic values
+	rand.Seed(time.Now().UnixNano())
 
 	flag.StringVar(&filename, "map", "", "A path to file that contains a map of cities")
 	flag.IntVar(&n, "N", 0, "Number of aliens")

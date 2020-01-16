@@ -1,6 +1,8 @@
 package world
 
 import (
+	"sort"
+
 	"github.com/velanse/aliens/printer"
 )
 
@@ -10,6 +12,12 @@ type Node struct {
 	Destinations map[string]*Node
 	Active       bool
 }
+
+type ByName []*Node
+
+func (n ByName) Len() int           { return len(n) }
+func (n ByName) Less(i, j int) bool { return n[i].Name < n[j].Name }
+func (n ByName) Swap(i, j int)      { n[i], n[j] = n[j], n[i] }
 
 func NewNode(name string) *Node {
 	return &Node{
@@ -43,6 +51,9 @@ func (n *Node) getDestinations() []*Node {
 		}
 	}
 
+	// for deterministic result we should sort this slice
+	sort.Sort(ByName(destinations))
+
 	return destinations
 }
 
@@ -51,5 +62,9 @@ func GetNodeNames(nodes map[string]*Node) []string {
 	for k := range nodes {
 		nodeNames = append(nodeNames, k)
 	}
+
+	// for deterministic result we should sort this slice
+	sort.Strings(nodeNames)
+
 	return nodeNames
 }
